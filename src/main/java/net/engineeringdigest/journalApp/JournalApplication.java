@@ -9,6 +9,7 @@ import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.data.mongodb.MongoDatabaseFactory;
 import org.springframework.data.mongodb.MongoTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.web.client.RestTemplate;
 
 @SpringBootApplication
 @EnableTransactionManagement
@@ -20,10 +21,13 @@ public class JournalApplication {
         System.out.println(environment.getActiveProfiles()[0]);
 
     }
-
     @Bean
     public MongoTransactionManager add(MongoDatabaseFactory dbFactory){
         return new MongoTransactionManager(dbFactory);
+    }
+    @Bean
+    public RestTemplate restTemplate(){
+        return new RestTemplate();
     }
 
 }
