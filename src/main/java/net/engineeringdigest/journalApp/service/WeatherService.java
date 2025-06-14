@@ -1,6 +1,7 @@
 package net.engineeringdigest.journalApp.service;
 
 import net.engineeringdigest.journalApp.api.response.WeatherResponse;
+import net.engineeringdigest.journalApp.cache.AppCache;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpMethod;
@@ -12,15 +13,21 @@ import org.springframework.web.client.RestTemplate;
 @Service
 public class WeatherService {
 
-    private static final String apiKey = "416566652e8746e98fb154822251106";
+    @Value("${weather.api-key}")
+    private String apiKey ;// to use @Value do not make them static as spring will not interfere with static variables
 
-    private static final String API = "http://api.weatherapi.com/v1/current.json?key=API_KEY&q=CITY";
+//    @Value("${weather.url}")
+    private String API ;
 
     @Autowired
     private RestTemplate restTemplate;
 
+    @Autowired
+    private AppCache appCache;
+
     public WeatherResponse getWeather(String city){
-        String finalApi=API.replace("CITY",city).replace("API_KEY",apiKey);
+        API=appCache.appCacheMap.get(AppCache.keys.weather_api.toString());
+        String finalApi= API.replace("<city>",city).replace("<apiKey>",apiKey);
         ResponseEntity<WeatherResponse> weatherCondition= restTemplate.exchange(finalApi, HttpMethod.GET,null, WeatherResponse.class);// deserialization of json to POJO
         return weatherCondition.getBody();
     }
